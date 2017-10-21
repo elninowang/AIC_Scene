@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import cv2
 
 dir = "/ext/Data/aichallenger/scene"
 
@@ -21,12 +22,15 @@ def createimages(json_file, first_dir, second_dir):
         target_dir = os.path.join(second_dir, obj["label_id"])
         if not os.path.exists(target_dir):
             os.mkdir(target_dir)
-        shutil.copy(os.path.join(first_dir, obj["image_id"]), target_dir)
+        #shutil.copy(os.path.join(first_dir, obj["image_id"]), target_dir)
+        img = cv2.imread(os.path.join(first_dir, obj["image_id"]))
+        flip_img = cv2.flip(img, 1)
+        cv2.imwrite(os.path.join(target_dir, "_" + obj["image_id"]), flip_img)
         count += 1
         if count % 2000 == 0:
             print("copy %d images" % count)
 
-createimages(first_valid_json, first_valid_img_dir, second_valid_dir)
+#createimages(first_valid_json, first_valid_img_dir, second_valid_dir)
 createimages(first_train_json, first_train_img_dir, second_train_dir)
 
 
