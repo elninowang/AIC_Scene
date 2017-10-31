@@ -11,10 +11,9 @@ from keras.applications import *
 from keras.preprocessing.image import *
 from keras.callbacks import *
 from keras.layers import *
+import itertools
 
 import tensorflow as tf
-
-import itertools
 import functools
 
 dir = "/ext/Data/aichallenger/scene/"
@@ -49,6 +48,8 @@ print("subdior to train type {}".format(train_generator.class_indices))
 valid_generator = gen.flow_from_directory(os.path.join(dir, 'valid'),  model_image_size, shuffle=True, batch_size=batch_size, class_mode="categorical", classes=classes)
 print("subdior to valid type {}".format(valid_generator.class_indices))
 
+top3_acc = functools.partial(tf.contrib.keras.metrics.top_k_categorical_accuracy, k=3)
+top3_acc.__name__ = 'top3_acc'
 
 def make_model(optimizer, dropout, lr, tune_layer_resnet50, tune_layer_inceptionV3, tune_layer_xception):
     input_tensor = Input((*model_image_size, 3))
@@ -85,9 +86,6 @@ def make_model(optimizer, dropout, lr, tune_layer_resnet50, tune_layer_inception
     elif optimizer == "rmsprop":
         optimizer_class = RMSprop(lr=lr)
 
-    top3_acc = functools.partial(tf.contrib.keras.metrics.top_k_categorical_accuracy, k=3)
-    top3_acc.__name__ = 'top3_acc'
-
     model.compile(optimizer=optimizer_class, loss='categorical_crossentropy', metrics=[top3_acc])
     return model
 
@@ -102,7 +100,8 @@ if not os.path.exists("models/mixed"):
 optimizers = ['adam']
 dropouts = [0.5, 0.25]
 lrs = [0.0001,  0.001]
-resnet50_tune_layers = [140, 162, 172]
+#resnet50_tune_layers = [140, 162, 172]
+resnet50_tune_layers = [140]
 inceptionV3_tune_layers = [173,  213,  253]
 xception_tune_layers = [96, 116,  126]
 
