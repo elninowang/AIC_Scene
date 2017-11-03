@@ -107,7 +107,7 @@ xception_tune_layers = [96, 116,  126]
 
 parameters = itertools.product(optimizers, dropouts, lrs, resnet50_tune_layers, inceptionV3_tune_layers, xception_tune_layers)
 
-skip_count = 11
+skip_count = 7
 count = 0
 for p in parameters:
     count += 1
